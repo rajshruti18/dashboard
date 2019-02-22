@@ -19,9 +19,9 @@ exports.getOne = (req, res) => {
 
 // /proposals
 exports.list = (req, res) => {
-    const query = `SELECT "Proposal"."ProposalID",                  
-            "Proposal"."ShortTitle",
-            "Proposal"."dateSubmitted",                                                                                                      
+    const query = `SELECT "Proposal"."ProposalID" as proposal_id,                  
+            "Proposal"."ShortTitle" as short_name,
+            "Proposal"."dateSubmitted" as prop_submitted,                                                                                                      
             TRIM(CONCAT("Submitter"."submitterFirstName", ' ', "Submitter"."submitterLastName")) AS pi_name,
             name.description AS proposal_status,
             name2.description AS tic_name,
@@ -36,7 +36,7 @@ exports.list = (req, res) => {
         INNER JOIN name name3 ON name3.index="Submitter"."submitterInstitution" AND name3."column"='submitterInstitution'
         INNER JOIN name name4 ON name4.index="ProposalDetails"."therapeuticArea" AND name4."column"='therapeuticArea'
 WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401)
-        ORDER BY "ProposalID";`
+        ORDER BY proposal_id;`
     db.any(query)
         .then(data => {
             data.forEach(proposal => {
