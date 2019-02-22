@@ -26,12 +26,16 @@ const query = `SELECT "Proposal"."ProposalID",
             name3.description AS org_name,
             name4.description AS therapeutic_area,
             "ProposalFunding"."totalBudget" as anticipated_budget,
-            "ProposalFunding"."fundingPeriod" as funding_duration
+            "ProposalFunding"."fundingPeriod" as funding_duration,
+            "PATMeeting"."meetingDate",
+            "ProtocolTimelines_estimated"."plannedGrantSubmissionDate"
         FROM "Proposal"
         INNER JOIN "Submitter" ON "Proposal"."ProposalID"="Submitter"."ProposalID"
         INNER JOIN "ProposalDetails" ON "Proposal"."ProposalID"="ProposalDetails"."ProposalID"
         LEFT JOIN "AssignProposal" ON "Proposal"."ProposalID"="AssignProposal"."ProposalID"
         INNER JOIN "ProposalFunding" ON "Proposal"."ProposalID" = "ProposalFunding"."ProposalID"
+        LEFT JOIN "PATMeeting" ON "Proposal"."ProposalID" = "PATMeeting"."ProposalID"
+        LEFT JOIN "ProtocolTimelines_estimated" ON "Proposal"."ProposalID" = "ProtocolTimelines_estimated"."ProposalID"
         INNER JOIN name ON name.index="Proposal"."proposalStatus" AND name."column"='proposalStatus'
         LEFT JOIN name name2 ON name2.index="AssignProposal"."assignToInstitution" AND name2."column"='assignToInstitution'
         INNER JOIN name name3 ON name3.index="Submitter"."submitterInstitution" AND name3."column"='submitterInstitution'
