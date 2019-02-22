@@ -30,16 +30,16 @@ const query = `SELECT "Proposal"."ProposalID",
             "PATMeeting"."meetingDate",
             "ProtocolTimelines_estimated"."plannedGrantSubmissionDate"
         FROM "Proposal"
-        INNER JOIN "Submitter" ON "Proposal"."ProposalID"="Submitter"."ProposalID"
-        INNER JOIN "ProposalDetails" ON "Proposal"."ProposalID"="ProposalDetails"."ProposalID"
-        LEFT JOIN "AssignProposal" ON "Proposal"."ProposalID"="AssignProposal"."ProposalID"
+        INNER JOIN "Submitter" ON "Proposal"."ProposalID" = "Submitter"."ProposalID"
+        INNER JOIN "ProposalDetails" ON "Proposal"."ProposalID" = "ProposalDetails"."ProposalID"
+        LEFT JOIN "AssignProposal" ON "Proposal"."ProposalID" = "AssignProposal"."ProposalID"
         INNER JOIN "ProposalFunding" ON "Proposal"."ProposalID" = "ProposalFunding"."ProposalID"
         LEFT JOIN "PATMeeting" ON "Proposal"."ProposalID" = "PATMeeting"."ProposalID"
         LEFT JOIN "ProtocolTimelines_estimated" ON "Proposal"."ProposalID" = "ProtocolTimelines_estimated"."ProposalID"
-        INNER JOIN name ON name.index="Proposal"."proposalStatus" AND name."column"='proposalStatus'
-        LEFT JOIN name name2 ON name2.index="AssignProposal"."assignToInstitution" AND name2."column"='assignToInstitution'
-        INNER JOIN name name3 ON name3.index="Submitter"."submitterInstitution" AND name3."column"='submitterInstitution'
-        INNER JOIN name name4 ON name4.index="ProposalDetails"."therapeuticArea" AND name4."column"='therapeuticArea'
+        INNER JOIN name ON name.index = "Proposal"."proposalStatus" AND name."column" = 'proposalStatus'
+        LEFT JOIN name name2 ON name2.index = "AssignProposal"."assignToInstitution" AND name2."column" = 'assignToInstitution'
+        INNER JOIN name name3 ON name3.index = "Submitter"."submitterInstitution" AND name3."column" = 'submitterInstitution'
+        INNER JOIN name name4 ON name4.index = "ProposalDetails"."therapeuticArea" AND name4."column" = 'therapeuticArea'
     	WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401)
         ORDER BY "ProposalID";`
 
@@ -53,13 +53,13 @@ const query2 = `SELECT "Proposal"."ProposalID",
                         name4.description AS therapeutic_area,
                         name5.description AS new_service_selection,
                         "ProposalFunding"."totalBudget" as anticipated_budget,
-                        "ProposalFunding"."fundingPeriod" as funding_duration
+                        "ProposalFunding"."fundingPeriod" as funding_duration,
                         "PATMeeting"."meetingDate",
                         "ProtocolTimelines_estimated"."plannedGrantSubmissionDate"
                     FROM "Proposal"
-                    INNER JOIN "Submitter" ON "Proposal"."ProposalID"="Submitter"."ProposalID"
-                    INNER JOIN "ProposalDetails" ON "Proposal"."ProposalID"="ProposalDetails"."ProposalID"
-                    LEFT JOIN "AssignProposal" ON "Proposal"."ProposalID"="AssignProposal"."ProposalID"
+                    INNER JOIN "Submitter" ON "Proposal"."ProposalID" = "Submitter"."ProposalID"
+                    INNER JOIN "ProposalDetails" ON "Proposal"."ProposalID" = "ProposalDetails"."ProposalID"
+                    LEFT JOIN "AssignProposal" ON "Proposal"."ProposalID" = "AssignProposal"."ProposalID"
                     INNER JOIN "ProposalFunding" ON "Proposal"."ProposalID" = "ProposalFunding"."ProposalID"
                     LEFT JOIN "PATMeeting" ON "Proposal"."ProposalID" = "PATMeeting"."ProposalID"
                     LEFT JOIN "ProtocolTimelines_estimated" ON "Proposal"."ProposalID" = "ProtocolTimelines_estimated"."ProposalID"
@@ -69,7 +69,8 @@ const query2 = `SELECT "Proposal"."ProposalID",
                     INNER JOIN name name3 ON name3.index="Submitter"."submitterInstitution" AND name3."column"='submitterInstitution'
                     INNER JOIN name name4 ON name4.index="ProposalDetails"."therapeuticArea" AND name4."column"='therapeuticArea'
                     INNER JOIN name name5 ON name5.id="Proposal_NewServiceSelection"."serviceSelection" AND name5."column"='serviceSelection'
-                    WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401);`
+                    WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401)
+                    ORDER BY "ProposalID";`
 
 const query3 = `SELECT "Proposal"."ProposalID",                  
                         "Proposal"."ShortTitle",
@@ -91,13 +92,14 @@ const query3 = `SELECT "Proposal"."ProposalID",
                     INNER JOIN "ProposalFunding" ON "Proposal"."ProposalID" = "ProposalFunding"."ProposalID"
                     LEFT JOIN "PATMeeting" ON "Proposal"."ProposalID" = "PATMeeting"."ProposalID"
                     LEFT JOIN "ProtocolTimelines_estimated" ON "Proposal"."ProposalID" = "ProtocolTimelines_estimated"."ProposalID"
-                    INNER JOIN "Proposal_ServicesApproved" ON "Proposal"."ProposalID" = "Proposal_NewServiceSelection"."ProposalID"
+                    INNER JOIN "Proposal_ServicesApproved" ON "Proposal"."ProposalID" = "Proposal_ServicesApproved"."ProposalID"
                     INNER JOIN name ON name.index="Proposal"."proposalStatus" AND name."column"='proposalStatus'
                     LEFT JOIN name name2 ON name2.index="AssignProposal"."assignToInstitution" AND name2."column"='assignToInstitution'
                     INNER JOIN name name3 ON name3.index="Submitter"."submitterInstitution" AND name3."column"='submitterInstitution'
                     INNER JOIN name name4 ON name4.index="ProposalDetails"."therapeuticArea" AND name4."column"='therapeuticArea'
                     INNER JOIN name name5 ON name5.id="Proposal_ServicesApproved"."servicesApproved" AND name5."column"='servicesApproved'
-                    WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401);`
+                    WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401)
+                    ORDER BY "ProposalID";`
 
 // /proposals
 exports.list = (req, res) => {
