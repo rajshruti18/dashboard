@@ -43,6 +43,62 @@ const query = `SELECT "Proposal"."ProposalID",
     	WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401)
         ORDER BY "ProposalID";`
 
+const query2 = `SELECT "Proposal"."ProposalID",                  
+                        "Proposal"."ShortTitle",
+                        "Proposal"."dateSubmitted",                                                                                                      
+                        TRIM(CONCAT("Submitter"."submitterFirstName", ' ', "Submitter"."submitterLastName")) AS pi_name,
+                        name.description AS proposal_status,
+                        name2.description AS tic_name,
+                        name3.description AS org_name,
+                        name4.description AS therapeutic_area,
+                        name5.description AS new_service_selection,
+                        "ProposalFunding"."totalBudget" as anticipated_budget,
+                        "ProposalFunding"."fundingPeriod" as funding_duration
+                        "PATMeeting"."meetingDate",
+                        "ProtocolTimelines_estimated"."plannedGrantSubmissionDate"
+                    FROM "Proposal"
+                    INNER JOIN "Submitter" ON "Proposal"."ProposalID"="Submitter"."ProposalID"
+                    INNER JOIN "ProposalDetails" ON "Proposal"."ProposalID"="ProposalDetails"."ProposalID"
+                    LEFT JOIN "AssignProposal" ON "Proposal"."ProposalID"="AssignProposal"."ProposalID"
+                    INNER JOIN "ProposalFunding" ON "Proposal"."ProposalID" = "ProposalFunding"."ProposalID"
+                    LEFT JOIN "PATMeeting" ON "Proposal"."ProposalID" = "PATMeeting"."ProposalID"
+                    LEFT JOIN "ProtocolTimelines_estimated" ON "Proposal"."ProposalID" = "ProtocolTimelines_estimated"."ProposalID"
+                    INNER JOIN "Proposal_NewServiceSelection" ON "Proposal"."ProposalID" = "Proposal_NewServiceSelection"."ProposalID"
+                    INNER JOIN name ON name.index="Proposal"."proposalStatus" AND name."column"='proposalStatus'
+                    LEFT JOIN name name2 ON name2.index="AssignProposal"."assignToInstitution" AND name2."column"='assignToInstitution'
+                    INNER JOIN name name3 ON name3.index="Submitter"."submitterInstitution" AND name3."column"='submitterInstitution'
+                    INNER JOIN name name4 ON name4.index="ProposalDetails"."therapeuticArea" AND name4."column"='therapeuticArea'
+                    INNER JOIN name name5 ON name5.id="Proposal_NewServiceSelection"."serviceSelection" AND name5."column"='serviceSelection'
+                    WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401);`
+
+const query3 = `SELECT "Proposal"."ProposalID",                  
+                        "Proposal"."ShortTitle",
+                        "Proposal"."dateSubmitted",                                                                                                      
+                        TRIM(CONCAT("Submitter"."submitterFirstName", ' ', "Submitter"."submitterLastName")) AS pi_name,
+                        name.description AS proposal_status,
+                        name2.description AS tic_name,
+                        name3.description AS org_name,
+                        name4.description AS therapeutic_area,
+                        name5.description AS services_approved,
+                        "ProposalFunding"."totalBudget" as anticipated_budget,
+                        "ProposalFunding"."fundingPeriod" as funding_duration,
+                        "PATMeeting"."meetingDate",
+                        "ProtocolTimelines_estimated"."plannedGrantSubmissionDate"
+                    FROM "Proposal"
+                    INNER JOIN "Submitter" ON "Proposal"."ProposalID"="Submitter"."ProposalID"
+                    INNER JOIN "ProposalDetails" ON "Proposal"."ProposalID"="ProposalDetails"."ProposalID"
+                    LEFT JOIN "AssignProposal" ON "Proposal"."ProposalID"="AssignProposal"."ProposalID"
+                    INNER JOIN "ProposalFunding" ON "Proposal"."ProposalID" = "ProposalFunding"."ProposalID"
+                    LEFT JOIN "PATMeeting" ON "Proposal"."ProposalID" = "PATMeeting"."ProposalID"
+                    LEFT JOIN "ProtocolTimelines_estimated" ON "Proposal"."ProposalID" = "ProtocolTimelines_estimated"."ProposalID"
+                    INNER JOIN "Proposal_ServicesApproved" ON "Proposal"."ProposalID" = "Proposal_NewServiceSelection"."ProposalID"
+                    INNER JOIN name ON name.index="Proposal"."proposalStatus" AND name."column"='proposalStatus'
+                    LEFT JOIN name name2 ON name2.index="AssignProposal"."assignToInstitution" AND name2."column"='assignToInstitution'
+                    INNER JOIN name name3 ON name3.index="Submitter"."submitterInstitution" AND name3."column"='submitterInstitution'
+                    INNER JOIN name name4 ON name4.index="ProposalDetails"."therapeuticArea" AND name4."column"='therapeuticArea'
+                    INNER JOIN name name5 ON name5.id="Proposal_ServicesApproved"."servicesApproved" AND name5."column"='servicesApproved'
+                    WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401);`
+
 // /proposals
 exports.list = (req, res) => {
     db.any(query)
@@ -90,30 +146,7 @@ exports.bySubmittedService = (req, res) => {
     db.any(serviceQuery)
         .then(services => {
             services.forEach(service => { service.proposals = [] })
-            const query = `SELECT "Proposal"."ProposalID",                  
-                        "Proposal"."ShortTitle",
-                        "Proposal"."dateSubmitted",                                                                                                      
-                        TRIM(CONCAT("Submitter"."submitterFirstName", ' ', "Submitter"."submitterLastName")) AS pi_name,
-                        name.description AS proposal_status,
-                        name2.description AS tic_name,
-                        name3.description AS org_name,
-                        name4.description AS therapeutic_area,
-                        name5.description AS new_service_selection,
-                        "ProposalFunding"."totalBudget" as anticipated_budget,
-                        "ProposalFunding"."fundingPeriod" as funding_duration
-                    FROM "Proposal"
-                    INNER JOIN "Submitter" ON "Proposal"."ProposalID"="Submitter"."ProposalID"
-                    INNER JOIN "ProposalDetails" ON "Proposal"."ProposalID"="ProposalDetails"."ProposalID"
-                    LEFT JOIN "AssignProposal" ON "Proposal"."ProposalID"="AssignProposal"."ProposalID"
-                    INNER JOIN "ProposalFunding" ON "Proposal"."ProposalID" = "ProposalFunding"."ProposalID"
-                    INNER JOIN "Proposal_NewServiceSelection" ON "Proposal"."ProposalID" = "Proposal_NewServiceSelection"."ProposalID"
-                    INNER JOIN name ON name.index="Proposal"."proposalStatus" AND name."column"='proposalStatus'
-                    LEFT JOIN name name2 ON name2.index="AssignProposal"."assignToInstitution" AND name2."column"='assignToInstitution'
-                    INNER JOIN name name3 ON name3.index="Submitter"."submitterInstitution" AND name3."column"='submitterInstitution'
-                    INNER JOIN name name4 ON name4.index="ProposalDetails"."therapeuticArea" AND name4."column"='therapeuticArea'
-                    INNER JOIN name name5 ON name5.id="Proposal_NewServiceSelection"."serviceSelection" AND name5."column"='serviceSelection'
-                    WHERE "Proposal"."ProposalID" NOT IN (168,200,220,189,355,390,272,338,394,286,306,401);`
-            db.any(query)
+            db.any(query2)
                 .then(data => {
                     data.forEach(proposal => {
                         const index = services.findIndex(service => service.name === proposal.new_service_selection)
@@ -226,12 +259,7 @@ exports.byDate = (req, res) => {
 
 // /proposals/approved-services
 exports.approvedServices = (req, res) => {
-    const query = `SELECT DISTINCT vote.proposal_id, vote.meeting_date, name.description AS service_approved
-        FROM vote
-        INNER JOIN service_services_approved ON vote.proposal_id=service_services_approved.proposal_id
-        INNER JOIN name ON name.id=service_services_approved.services_approved
-        WHERE vote.meeting_date IS NOT NULL ORDER BY vote.proposal_id;`
-    db.any(query)
+    db.any(query3)
         .then(data => {
             let newData = []
             data.forEach(proposal => {
@@ -258,12 +286,7 @@ exports.approvedServices = (req, res) => {
 
 // /proposals/submitted-services
 exports.submittedServices = (req, res) => {
-    const query = `SELECT DISTINCT vote.proposal_id, vote.meeting_date, name.description AS new_service_selection
-        FROM vote
-        INNER JOIN proposal_new_service_selection ON vote.proposal_id=proposal_new_service_selection.proposal_id
-        INNER JOIN name ON name.id=proposal_new_service_selection.new_service_selection
-        WHERE vote.meeting_date IS NOT NULL ORDER BY vote.proposal_id;`
-    db.any(query)
+    db.any(query2)
         .then(data => {
             let newData = []
             data.forEach(prop => {
