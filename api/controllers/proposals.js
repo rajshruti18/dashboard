@@ -405,28 +405,7 @@ exports.countSubmittedForServicesByMonth = (req, res) => {
 
 // /proposals/resubmissions
 exports.resubmissions = (req, res) => {
-    const query = `SELECT
-            proposal.proposal_id, name2.description AS services_approved,service_services_approved,
-            name3.description AS funding,
-            funding.funding
-        FROM proposal
-        INNER JOIN service ON proposal.proposal_id=service.proposal_id
-        INNER JOIN funding ON funding.proposal_id=service.proposal_id
-        INNER JOIN service_services_approved ON proposal.proposal_id=service_services_approved.proposal_id
-        INNER JOIN name AS name3 on name3.index=cast(funding.funding as varchar)
-            AND name3."column"='funding'
-        INNER JOIN name AS name2 on name2.id=service_services_approved.services_approved
-            AND name2."column"='services_approved'
-        WHERE proposal.redcap_repeat_instrument IS NULL
-            AND service.redcap_repeat_instrument IS NULL
-            AND proposal.redcap_repeat_instance IS NULL
-            AND service.redcap_repeat_instance IS NULL
-            AND funding.redcap_repeat_instrument IS NULL
-            AND funding.redcap_repeat_instance IS NULL
-            AND proposal.redcap_repeat_instance IS NULL
-            AND proposal.redcap_repeat_instrument IS NULL
-            AND proposal.protocol_status='21'
-        ORDER BY proposal.proposal_id;`
+    // filter by status 21
     db.any(query)
         .then(data => {
             res.status(200).send(data)
