@@ -106,7 +106,7 @@ exports.list = (req, res) => {
     db.any(query)
         .then(data => {
             data.forEach(proposal => {
-                proposal.submission_date = proposal.prop_submit.toDateString()
+                proposal.submission_date = "Proposal".dateSubmitted.toDateString()
             })
             res.status(200).send(data)
         })
@@ -120,15 +120,15 @@ exports.list = (req, res) => {
 exports.byStatus = (req, res) => {
     let statusQuery = `SELECT description AS name
         FROM name
-        WHERE "column"='protocol_status' ORDER BY index;`
+        WHERE "column"='proposalStatus' ORDER BY index;`
     db.any(statusQuery)
         .then(statuses => {
             statuses.forEach(status => { status.proposals = [] })
             db.any(query)
                 .then(data => {
                     data.forEach(proposal => {
-                        proposal.submission_date = proposal.prop_submit ? proposal.prop_submit.toDateString() : null
-                        const index = statuses.findIndex(status => status.name === proposal.proposal_status)
+                        proposal.submission_date = "Proposal".dateSubmitted ? "Proposal".dateSubmitted.toDateString() : null
+                        const index = statuses.findIndex(status => status.name === "Proposal".proposalStatus)
                         if (index >= 0) statuses[index].proposals.push(proposal)
                     })
                     res.status(200).send(statuses)
@@ -144,14 +144,14 @@ exports.byStatus = (req, res) => {
 exports.bySubmittedService = (req, res) => {
     let serviceQuery = `SELECT description AS name
         FROM name
-        WHERE "column"='new_service_selection' ORDER BY index;`
+        WHERE "column"='serviceSelection' ORDER BY index;`
     db.any(serviceQuery)
         .then(services => {
             services.forEach(service => { service.proposals = [] })
             db.any(query2)
                 .then(data => {
                     data.forEach(proposal => {
-                        const index = services.findIndex(service => service.name === proposal.new_service_selection)
+                        const index = services.findIndex(service => service.name === "Proposal".serviceSelection)
                         if (index >= 0) services[index].proposals.push(proposal)
                     })
                     res.status(200).send(services)
@@ -165,7 +165,7 @@ exports.bySubmittedService = (req, res) => {
 
 // /proposals/by-tic
 exports.byTic = (req, res) => {
-    let ticQuery = `SELECT index, description AS name FROM name WHERE "column"='tic_ric_assign_v2' ORDER BY index;`
+    let ticQuery = `SELECT index, description AS name FROM name WHERE "column"='assignToInstitution' ORDER BY index;`
     db.any(ticQuery)
         .then(tics => {
             tics.forEach(tic => { tic.proposals = [] })
@@ -173,7 +173,7 @@ exports.byTic = (req, res) => {
                 .then(data => {
                     data.forEach(proposal => {
                         // console.log(proposal)
-                        proposal.submission_date = proposal.prop_submit ? proposal.prop_submit.toDateString() : null
+                        proposal.submission_date = "Proposal".dateSubmitted ? "Proposal".dateSubmitted.toDateString() : null
                         const index = tics.findIndex(tic => tic.index === proposal.tic_ric_assign_v2)
                         proposal.tic_ric_assign_v2 = parseInt(proposal.tic_ric_assign_v2)
                         if (index >= 0) tics[index].proposals.push(proposal)
@@ -189,7 +189,7 @@ exports.byTic = (req, res) => {
 
 // /proposals/by-organization
 exports.byOrganization = (req, res) => {
-    const organizationQuery = `SELECT description AS name FROM name WHERE "column"='org_name' ORDER BY index;`
+    const organizationQuery = `SELECT description AS name FROM name WHERE "column"='submitterInstitution' ORDER BY index;`
     db.any(organizationQuery)
         .then(organizations => {
             organizations.forEach(organization => { organization.proposals = [] })
@@ -211,7 +211,7 @@ exports.byOrganization = (req, res) => {
 
 // /proposals/by-therapeutic-area
 exports.byTherapeuticArea = (req, res) => {
-    const areasQuery = `SELECT description AS name FROM name WHERE "column"='theraputic_area' ORDER BY index;`
+    const areasQuery = `SELECT description AS name FROM name WHERE "column"='therapeuticArea' ORDER BY index;`
     db.any(areasQuery)
         .then(areas => {
             areas.forEach(area => { area.proposals = [] })
