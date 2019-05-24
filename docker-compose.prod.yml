@@ -14,11 +14,14 @@ services:
       REDCAP_APPLICATION_TOKEN: $REDCAP_APPLICATION_TOKEN
       POSTGRES_DUMP_PATH: /backup
       REDCAP_URL_BASE: https://redcap.vanderbilt.edu/api/
+      SERVER: 1
       SCHEDULE_RUN_TIME: 00:00
     volumes:
       - $POSTGRES_DUMP_PATH:/backup
     depends_on:
       - db
+    expose:
+      - 5000
 
   db:
     container_name: pmd-db
@@ -75,3 +78,4 @@ services:
       - 80:80
     depends_on:
       - api
+      - pipeline
