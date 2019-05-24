@@ -3,7 +3,7 @@ version: '3'
 services:
   pipeline:
     container_name: pmd-pipeline
-    image: zooh/pmd-pipeline-reload:0.1.4
+    image: zooh/pmd-pipeline-reload:0.2.0
     restart: always
     environment:
       POSTGRES_DATABASE_NAME: $POSTGRES_DB
@@ -13,6 +13,8 @@ services:
       POSTGRES_HOST: db
       REDCAP_APPLICATION_TOKEN: $REDCAP_APPLICATION_TOKEN
       POSTGRES_DUMP_PATH: /backup
+      REDCAP_URL_BASE: https://redcap.vanderbilt.edu/api/
+      SCHEDULE_RUN_TIME: 00:00
     volumes:
       - $POSTGRES_DUMP_PATH:/backup
     depends_on:
